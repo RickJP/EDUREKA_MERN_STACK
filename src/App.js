@@ -1,28 +1,35 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import gql from 'graphql-tag';
+import { graphql } from 'react-apollo';
+import { TextDecoder } from 'util';
+
+const TodosQuery = gql`
+{
+  todos {
+    id
+    text
+    complete
+  }
+}
+`;
 
 class App extends Component {
   render() {
+    const {
+      data: {loading, todos }
+    } = this.props;
+    if (loading) {
+      return null;
+    }
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
+      <div>
+        {todos.map(todo => <div key={`${todo.id}-todo-item`}>
+                            {todo.text} 
+                          </div> )}
       </div>
     );
   }
 }
 
-export default App;
+export default graphql(TodosQuery)(App);
+//export default App;
